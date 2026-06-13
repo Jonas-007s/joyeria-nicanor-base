@@ -82,7 +82,7 @@ export default function DetalleProducto() {
   }
 
   return (
-    <div className="min-h-screen bg-white w-full">
+    <div className="min-h-screen bg-white w-full overflow-x-hidden">
       {/* ✅ Notificación de éxito */}
       {showNotification && (
         <div className="fixed top-4 right-4 bg-black text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
@@ -155,7 +155,7 @@ export default function DetalleProducto() {
                   <span className="chip bg-gray-100 text-black mb-6 uppercase tracking-wide">{producto.categoria}</span>
                 )}
               </div>
-              <div className="text-4xl font-bold text-black">
+              <div className="text-3xl md:text-4xl font-bold text-black break-all">
                 ${producto.precio?.toLocaleString()}
               </div>
               {producto.descripcion && (
