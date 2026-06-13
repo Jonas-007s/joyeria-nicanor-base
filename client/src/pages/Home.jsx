@@ -232,17 +232,15 @@ function Home() {
 /* ─── ContactForm ────────────────────────────────────────────────────────── */
 function ContactForm() {
   const [formData, setFormData] = useState({ nombre: '', email: '', telefono: '', mensaje: '' });
-  const [status, setStatus] = useState('idle');
+  const { config } = useConfig();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setStatus('sending');
-    try {
-      await axios.post('/api/contact', formData);
-      setStatus('success');
-      setFormData({ nombre: '', email: '', telefono: '', mensaje: '' });
-      setTimeout(() => setStatus('idle'), 4000);
-    } catch { setStatus('error'); }
+    const whatsappNumber = config?.whatsappNumber || '56912345678';
+    const text = `Hola, soy ${formData.nombre}.\n\n*Mis Datos:*\n📧 Email: ${formData.email}\n📞 Teléfono: ${formData.telefono}\n\n*Mensaje:*\n${formData.mensaje}`;
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+    setFormData({ nombre: '', email: '', telefono: '', mensaje: '' });
   };
 
   const inputStyle = {
@@ -261,13 +259,10 @@ function ContactForm() {
       <input type="tel" placeholder="Teléfono" value={formData.telefono} onChange={e => setFormData({ ...formData, telefono: e.target.value })} style={inputStyle} onFocus={e => e.target.style.borderColor = '#C9A84C'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'} />
       <textarea placeholder="Tu mensaje..." rows={5} required value={formData.mensaje} onChange={e => setFormData({ ...formData, mensaje: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} onFocus={e => e.target.style.borderColor = '#C9A84C'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'} />
 
-      {status === 'success' && <div style={{ padding: '12px 16px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 3, color: '#6EE7B7', fontFamily: "'Inter', sans-serif", fontSize: 12 }}>¡Mensaje enviado! Te contactaremos pronto.</div>}
-      {status === 'error' && <div style={{ padding: '12px 16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 3, color: '#FCA5A5', fontFamily: "'Inter', sans-serif", fontSize: 12 }}>Error al enviar. Intenta nuevamente.</div>}
-
-      <button type="submit" disabled={status === 'sending'} style={{ padding: '14px', background: '#C9A84C', color: '#0A0A0A', border: 'none', borderRadius: 3, fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: status === 'sending' ? 'not-allowed' : 'pointer', opacity: status === 'sending' ? 0.6 : 1, transition: 'all 0.2s' }}
-        onMouseEnter={e => { if (status !== 'sending') e.currentTarget.style.background = '#E2C97E'; }}
-        onMouseLeave={e => { if (status !== 'sending') e.currentTarget.style.background = '#C9A84C'; }}>
-        {status === 'sending' ? 'Enviando...' : 'Enviar Mensaje'}
+      <button type="submit" style={{ padding: '14px', background: '#C9A84C', color: '#0A0A0A', border: 'none', borderRadius: 3, fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.2s' }}
+        onMouseEnter={e => { e.currentTarget.style.background = '#E2C97E'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = '#C9A84C'; }}>
+        Enviar por WhatsApp
       </button>
     </form>
   );
