@@ -6,6 +6,8 @@ const productSchema = new mongoose.Schema({
   descripcion: String,
   categoria: String,
   stock: Number,
+  sku: { type: String, trim: true },         // Código SKU visible en solicitud
+  material: { type: String, trim: true },    // Material principal (Oro 18k, Plata 925, etc.)
   imagenes: [String],
   especificaciones: {
     material: String,
@@ -24,7 +26,14 @@ const productSchema = new mongoose.Schema({
     fecha: Date,
     descripcion: String,
     preview: Number,
+  },
+  fechaLanzamiento: { type: Date },
+  descripcionLanzamiento: { type: String },
+  seccion: {
+    type: String,
+    enum: ['productos', 'mas-lanzamientos', 'nuevo-lanzamiento', 'artesanias'],
+    default: 'productos'
   }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

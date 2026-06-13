@@ -1,0 +1,224 @@
+/* ──────────────────────────────────────────────────────────────────────────────
+   QUOTATION SUMMARY - Resumen Premium
+   ────────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --color-gold: #D4AF37;
+  --color-gold-light: #F4E4C1;
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+  --color-gray-50: #FAFAFA;
+  --color-gray-100: #F9F9F9;
+  --color-gray-200: #EEEEEE;
+  --color-gray-600: #666666;
+}
+
+.quotation-summary {
+  background: var(--color-white);
+  border: 2px solid var(--color-gold);
+  border-radius: 8px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+}
+
+/* Header */
+.summary-header {
+  margin: 0 0 10px 0;
+}
+
+.summary-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-black);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Stats */
+.summary-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px 0;
+  background: var(--color-gray-50);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 0 -4px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--color-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-gold);
+}
+
+.stat.divider {
+  border-left: 1px solid var(--color-gray-200);
+}
+
+/* Separador */
+.summary-separator {
+  height: 1px;
+  background: var(--color-gray-200);
+}
+
+/* Mensaje */
+.summary-message {
+  background: linear-gradient(135deg, var(--color-gold-light) 0%, rgba(244, 228, 193, 0.5) 100%);
+  border-left: 4px solid var(--color-gold);
+  padding: 16px;
+  border-radius: 4px;
+}
+
+.summary-message p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-black);
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* Botón principal */
+.btn {
+  padding: 14px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background: var(--color-gold);
+  color: var(--color-black);
+  border: 2px solid var(--color-gold);
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: transparent;
+  color: var(--color-gold);
+  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.25);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary-gold {
+  background: linear-gradient(135deg, var(--color-gold) 0%, #C9A829 100%);
+}
+
+.btn-primary-gold:hover {
+  background: transparent;
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+}
+
+/* Beneficios */
+.summary-benefits {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.benefit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px;
+  text-align: center;
+  border-radius: 4px;
+  background: var(--color-gray-50);
+  transition: all 0.3s ease;
+}
+
+.benefit:hover {
+  background: var(--color-gold-light);
+  transform: translateY(-2px);
+}
+
+.benefit-icon {
+  font-size: 20px;
+}
+
+.benefit-text {
+  font-size: 11px;
+  color: var(--color-gray-600);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.benefit:hover .benefit-text {
+  color: var(--color-black);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .quotation-summary {
+    padding: 20px;
+    margin-top: 20px;
+  }
+
+  .summary-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat.divider {
+    border-left: none;
+  }
+
+  .summary-benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+}
+
+/* Animación de entrada */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.quotation-summary {
+  animation: slideIn 0.4s ease;
+}

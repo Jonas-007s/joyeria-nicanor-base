@@ -1,163 +1,275 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { Link } from 'react-router-dom';
+import LaunchCarousel from '../components/LaunchCarousel';
+import { useProducts, TIPOS_JOYA } from '../hooks/useProducts';
+import { useConfig } from '../hooks/useConfig';
 
-function Countdown() {
-  const [time, setTime] = useState({days: 0, hours: 0, minutes: 0, seconds: 0});
-
-  useEffect(() => {
-    // Fecha objetivo: cambia esto por la fecha real de lanzamiento
-    const target = new Date();
-    target.setDate(target.getDate() + 5); // 5 días desde ahora
-
-    const interval = setInterval(() => {
-      const now = new Date();
-      const diff = target - now;
-      if (diff > 0) {
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((diff / (1000 * 60)) % 60);
-        const seconds = Math.floor((diff / 1000) % 60);
-        setTime({days, hours, minutes, seconds});
-      } else {
-        setTime({days: 0, hours: 0, minutes: 0, seconds: 0});
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
+/* ─── Filtro tipo pill ──────────────────────────────────────────────────── */
+function FilterPill({ label, active, onClick }) {
   return (
-    <span className="font-bold tracking-widest">
-      {String(time.days).padStart(2, '0')}:
-      {String(time.hours).padStart(2, '0')}:
-      {String(time.minutes).padStart(2, '0')}:
-      {String(time.seconds).padStart(2, '0')}
-    </span>
+    <button
+      onClick={onClick}
+      style={{
+        padding: '8px 20px',
+        borderRadius: 2,
+        border: active ? '1px solid #0A0A0A' : '1px solid #D8D3C8',
+        background: active ? '#0A0A0A' : 'transparent',
+        color: active ? '#FFFFFF' : '#6B6560',
+        fontFamily: "'Inter', sans-serif",
+        fontSize: 11,
+        fontWeight: active ? 700 : 400,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        cursor: 'pointer',
+        transition: 'all 0.18s ease',
+        whiteSpace: 'nowrap',
+      }}
+      onMouseEnter={e => {
+        if (!active) {
+          e.currentTarget.style.borderColor = '#0A0A0A';
+          e.currentTarget.style.color = '#0A0A0A';
+        }
+      }}
+      onMouseLeave={e => {
+        if (!active) {
+          e.currentTarget.style.borderColor = '#D8D3C8';
+          e.currentTarget.style.color = '#6B6560';
+        }
+      }}
+    >
+      {label}
+    </button>
   );
 }
 
+/* ─── Home ───────────────────────────────────────────────────────────────── */
 function Home() {
-  const [productos, setProductos] = useState([]);
+  const { coleccion, nuevosLanzamientos, loading: productsLoading, error } = useProducts();
+  const { config, loading: configLoading } = useConfig();
+  const [filtroActivo, setFiltroActivo] = useState('todos');
 
-  useEffect(() => {
-    axios.get('http://localhost:5000/api/products')
-      .then(res => setProductos(res.data));
-  }, []);
+  const loading = productsLoading || configLoading;
+
+  // Filtrar colección según tipo activo
+  const productosFiltrados = useMemo(() => {
+    if (filtroActivo === 'todos') return coleccion;
+    return coleccion.filter(p =>
+      p.categoria?.toLowerCase().trim() === filtroActivo
+    );
+  }, [coleccion, filtroActivo]);
+
+  // Contar productos por tipo para mostrar badge
+  const conteos = useMemo(() => {
+    const map = {};
+    coleccion.forEach(p => {
+      const cat = p.categoria?.toLowerCase().trim() || 'otro';
+      map[cat] = (map[cat] || 0) + 1;
+    });
+    return map;
+  }, [coleccion]);
 
   return (
-    <div className="w-full min-h-screen bg-white font-sans">
+    <div className="w-full min-h-screen" style={{ background: '#F7F5F0' }}>
+
       {/* Banner superior */}
-      <header>
-        <div className="w-full bg-[#f5f6f7] py-4 text-center text-gray-800 text-lg font-bold tracking-widest uppercase border-b border-gray-200">
-          Nuevos Productos pronto !!!!!!
-        </div>
-        {/* Menú de navegación fijo */}
-        <nav className="w-full bg-white shadow sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto flex justify-center gap-12 py-4 text-base font-semibold uppercase tracking-widest">
-            <a href="#productos" className="hover:text-yellow-600 transition">PRODUCTOS</a>
-            <a href="#artesanias" className="hover:text-yellow-600 transition">ARTESANÍAS</a>
-            <a href="#contacto" className="hover:text-yellow-600 transition">CONTACTO</a>
-          </div>
-        </nav>
-      </header>
-
-      <main>
-        {/* Sección Productos */}
-        <section id="productos" className="py-16 bg-white">
-          <h2 className="text-2xl md:text-3xl font-semibold text-center tracking-widest mb-2 uppercase">PRODUCTOS</h2>
-          <div className="flex justify-center mb-8">
-            <span className="block w-16 h-1 bg-black rounded"></span>
-          </div>
-          {/* Aquí puedes mapear tus productos si lo deseas */}
-        </section>
-
-        {/* Sección Más Lanzamientos */}
-        <section className="py-16 bg-white">
-          <h2 className="text-2xl md:text-3xl font-semibold text-center tracking-widest mb-2 uppercase">MÁS LANZAMIENTOS</h2>
-          <div className="flex justify-center mb-8">
-            <span className="block w-16 h-1 bg-black rounded"></span>
-          </div>
-        </section>
-
-        {/* Sección Nuevo Lanzamiento */}
-        <section className="py-16 bg-black text-white text-center">
-          <h2 className="text-2xl md:text-3xl font-semibold tracking-widest mb-2 uppercase">NUEVO LANZAMIENTO</h2>
-          <div className="flex justify-center mb-8">
-            <span className="block w-16 h-1 bg-white rounded"></span>
-          </div>
-          <p className="mb-6 max-w-xl mx-auto text-base md:text-lg font-medium">
-            Obtén un anillo <span className="font-bold text-yellow-400">GRATIS</span> al comprar un brazalete y un collar. Solo agrega un anillo a tu carrito
+      {config?.textos?.bannerTop && (
+        <div style={{ background: '#0A0A0A', padding: '12px 16px', textAlign: 'center' }}>
+          <p style={{ color: '#C9A84C', fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', margin: 0 }}>
+            {config.textos.bannerTop}
           </p>
-          <div className="mb-2 text-base md:text-lg">
-            Nuevo Lanzamiento en <Countdown />
+        </div>
+      )}
+
+      {/* ── Sección Lanzamiento ────────────────────────────────────────── */}
+      {nuevosLanzamientos && nuevosLanzamientos.length > 0 && (
+        <section style={{ background: '#0A0A0A', padding: '80px 0', position: 'relative', overflow: 'hidden', minHeight: 680, display: 'flex', alignItems: 'center', width: '100%' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 70%)', opacity: 0.9 }} />
+          <div style={{ position: 'relative', width: '100%', zIndex: 1 }}>
+            <LaunchCarousel launches={nuevosLanzamientos} />
           </div>
         </section>
+      )}
 
-        {/* Sección Artesanías */}
-        <section id="artesanias" className="py-16 bg-white">
-          <h2 className="text-2xl md:text-3xl font-semibold text-center tracking-widest mb-2 uppercase">ARTESANÍAS</h2>
-          <div className="flex justify-center mb-8">
-            <span className="block w-16 h-1 bg-black rounded"></span>
-          </div>
-          <div className="text-center text-base md:text-lg">
-            Nuevo Lanzamiento en <Countdown />
-          </div>
-        </section>
-      </main>
+      {/* ── Colección Principal ─────────────────────────────────────────── */}
+      <section style={{ padding: '80px 24px 100px', maxWidth: 1400, margin: '0 auto' }}>
 
-      {/* Footer con formulario de contacto */}
-      <footer id="contacto" className="py-16 bg-black text-white text-center">
-        <h2 className="text-3xl font-semibold mb-4 uppercase tracking-widest">Contacto</h2>
-        <h3 className="text-xl font-normal mb-4">¿Cómo puedo ayudar?</h3>
-        <p className="mb-4 max-w-xl mx-auto text-base md:text-lg">
-          Para consultas sobre una pieza personalizada, déjeme saber su presupuesto y cualquier idea de diseño específica.<br />
-          (color, estilo, piedras preciosas, metales, etc.)<br />
-          Para obtener ayuda con un pedido, incluya su número de pedido.
-        </p>
-        <form className="max-w-2xl mx-auto mt-8 space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <input
-              type="text"
-              placeholder="Name"
-              className="flex-1 bg-black border border-white text-white px-4 py-2 rounded focus:outline-none"
-              required
-            />
-            <input
-              type="email"
-              placeholder="Email *"
-              className="flex-1 bg-black border border-white text-white px-4 py-2 rounded focus:outline-none"
-              required
-            />
-          </div>
-          <input
-            type="text"
-            placeholder="Phone number"
-            className="w-full bg-black border border-white text-white px-4 py-2 rounded focus:outline-none"
+        {/* Encabezado de sección */}
+        <div style={{ textAlign: 'center', marginBottom: 52 }}>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#C9A84C', marginBottom: 12, fontWeight: 600 }}>
+            Joyería Artesanal
+          </p>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 300, color: '#0A0A0A', margin: '0 0 20px', letterSpacing: '0.04em' }}>
+            Nuestra Colección
+          </h2>
+          <div style={{ width: 48, height: 1, background: 'linear-gradient(to right, transparent, #C9A84C, transparent)', margin: '0 auto 16px' }} />
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: '#9A9080', maxWidth: 480, margin: '0 auto', lineHeight: 1.7 }}>
+            Cada pieza, una historia. Descubre nuestra selección de joyas de autor, elaboradas con los más finos materiales.
+          </p>
+        </div>
+
+        {/* Filtros de categoría */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginBottom: 52 }}>
+          <FilterPill
+            label={`Todas las Piezas${!loading ? ` (${coleccion.length})` : ''}`}
+            active={filtroActivo === 'todos'}
+            onClick={() => setFiltroActivo('todos')}
           />
-          <div className="flex flex-col md:flex-row gap-4">
-            <input
-              type="text"
-              placeholder="NICANOR"
-              className="flex-1 bg-black border border-white text-white px-4 py-2 rounded focus:outline-none"
-            />
-            <div className="flex items-center gap-2">
-              <span>ES | EN | FR</span>
+          {TIPOS_JOYA.map(t => {
+            const count = conteos[t.value] || 0;
+            if (count === 0) return null; // No mostrar filtros vacíos
+            return (
+              <FilterPill
+                key={t.value}
+                label={`${t.label} (${count})`}
+                active={filtroActivo === t.value}
+                onClick={() => setFiltroActivo(t.value)}
+              />
+            );
+          })}
+        </div>
+
+        {/* Grid de productos */}
+        {loading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '64px 0' }}>
+            <div style={{ width: 24, height: 24, border: '1.5px solid #E8E3D8', borderTopColor: '#C9A84C', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+          </div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '64px 0', color: '#9A9080', fontFamily: "'Inter', sans-serif" }}>
+            {error}
+          </div>
+        ) : productosFiltrados.length > 0 ? (
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 28 }}>
+              {productosFiltrados.map((producto, idx) => (
+                <div
+                  key={producto?._id || idx}
+                  style={{ transition: 'transform 0.25s ease, box-shadow 0.25s ease' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 20px 48px rgba(0,0,0,0.10)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                  <ProductCard prod={producto} />
+                </div>
+              ))}
             </div>
+
+            {/* CTA ver catálogo completo */}
+            <div style={{ textAlign: 'center', marginTop: 64 }}>
+              <Link
+                to="/productos"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 10,
+                  padding: '14px 36px',
+                  border: '1px solid #0A0A0A',
+                  color: '#0A0A0A',
+                  textDecoration: 'none',
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase',
+                  transition: 'all 0.2s ease',
+                  borderRadius: 2,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#0A0A0A'; e.currentTarget.style.color = '#FFFFFF'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#0A0A0A'; }}
+              >
+                Explorar Catálogo Completo
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </Link>
+            </div>
+          </>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '80px 0' }}>
+            <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 300, color: '#9A9080' }}>
+              No hay piezas en esta categoría aún
+            </p>
+            <button
+              onClick={() => setFiltroActivo('todos')}
+              style={{ marginTop: 20, padding: '10px 24px', border: '1px solid #C9A84C', background: 'transparent', color: '#C9A84C', fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: 2 }}
+            >
+              Ver toda la colección
+            </button>
           </div>
-          <textarea
-            placeholder=""
-            className="w-full bg-black border border-white text-white px-4 py-2 rounded focus:outline-none"
-            rows={3}
-          />
-          <button
-            type="submit"
-            className="w-full bg-white text-black font-bold py-2 rounded hover:bg-gray-200 transition uppercase"
-          >
-            ENVIAR
-          </button>
-        </form>
-      </footer>
+        )}
+      </section>
+
+      {/* ── Contacto ─────────────────────────────────────────────────────── */}
+      <section style={{ background: '#0A0A0A', padding: '80px 24px', width: '100%' }}>
+        <div style={{ maxWidth: 920, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#C9A84C', marginBottom: 12, fontWeight: 600 }}>Atención Personalizada</p>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 300, color: '#FFFFFF', margin: '0 0 16px', letterSpacing: '0.04em' }}>
+              ¿Cómo puedo ayudarte?
+            </h2>
+            <div style={{ width: 48, height: 1, background: 'linear-gradient(to right, transparent, #C9A84C, transparent)', margin: '0 auto' }} />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-12 items-start">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {[
+                { title: 'Piezas Personalizadas', text: 'Para consultas sobre una pieza personalizada, cuéntame tu visión: presupuesto, estilo, piedras preciosas, materiales.' },
+                { title: 'Soporte de Pedidos', text: 'Para obtener ayuda con un pedido existente, incluye tu número de pedido en el mensaje.' },
+              ].map(item => (
+                <div key={item.title} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 4, padding: '20px 24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                    <div style={{ width: 1, height: 18, background: '#C9A84C' }} />
+                    <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#FFFFFF', margin: 0 }}>{item.title}</h4>
+                  </div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, margin: 0 }}>{item.text}</p>
+                </div>
+              ))}
+            </div>
+            <ContactForm />
+          </div>
+        </div>
+      </section>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
+  );
+}
+
+/* ─── ContactForm ────────────────────────────────────────────────────────── */
+function ContactForm() {
+  const [formData, setFormData] = useState({ nombre: '', email: '', telefono: '', mensaje: '' });
+  const [status, setStatus] = useState('idle');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('sending');
+    try {
+      await axios.post('/api/contact', formData);
+      setStatus('success');
+      setFormData({ nombre: '', email: '', telefono: '', mensaje: '' });
+      setTimeout(() => setStatus('idle'), 4000);
+    } catch { setStatus('error'); }
+  };
+
+  const inputStyle = {
+    width: '100%', padding: '12px 16px', background: 'rgba(255,255,255,0.05)',
+    border: '1px solid rgba(255,255,255,0.12)', borderRadius: 3, color: '#FFFFFF',
+    fontFamily: "'Inter', sans-serif", fontSize: 13, outline: 'none', boxSizing: 'border-box',
+    transition: 'border-color 0.15s',
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input type="text" placeholder="Nombre" required value={formData.nombre} onChange={e => setFormData({ ...formData, nombre: e.target.value })} style={inputStyle} onFocus={e => e.target.style.borderColor = '#C9A84C'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'} />
+        <input type="email" placeholder="Email *" required value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} style={inputStyle} onFocus={e => e.target.style.borderColor = '#C9A84C'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'} />
+      </div>
+      <input type="tel" placeholder="Teléfono" value={formData.telefono} onChange={e => setFormData({ ...formData, telefono: e.target.value })} style={inputStyle} onFocus={e => e.target.style.borderColor = '#C9A84C'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'} />
+      <textarea placeholder="Tu mensaje..." rows={5} required value={formData.mensaje} onChange={e => setFormData({ ...formData, mensaje: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} onFocus={e => e.target.style.borderColor = '#C9A84C'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'} />
+
+      {status === 'success' && <div style={{ padding: '12px 16px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 3, color: '#6EE7B7', fontFamily: "'Inter', sans-serif", fontSize: 12 }}>¡Mensaje enviado! Te contactaremos pronto.</div>}
+      {status === 'error' && <div style={{ padding: '12px 16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 3, color: '#FCA5A5', fontFamily: "'Inter', sans-serif", fontSize: 12 }}>Error al enviar. Intenta nuevamente.</div>}
+
+      <button type="submit" disabled={status === 'sending'} style={{ padding: '14px', background: '#C9A84C', color: '#0A0A0A', border: 'none', borderRadius: 3, fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: status === 'sending' ? 'not-allowed' : 'pointer', opacity: status === 'sending' ? 0.6 : 1, transition: 'all 0.2s' }}
+        onMouseEnter={e => { if (status !== 'sending') e.currentTarget.style.background = '#E2C97E'; }}
+        onMouseLeave={e => { if (status !== 'sending') e.currentTarget.style.background = '#C9A84C'; }}>
+        {status === 'sending' ? 'Enviando...' : 'Enviar Mensaje'}
+      </button>
+    </form>
   );
 }
 

@@ -1,72 +1,515 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   JOYERÍA NICANOR — Design System Premium
+   Inspirado en: Tiffany & Co., Cartier, Rolex, Bulgari
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ── Variables de diseño ──────────────────────────────────────────────────── */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  /* Tipografía */
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Paleta premium: Negro, Blanco, Dorado */
+  --black:       #0a0a0a;
+  --black-soft:  #1a1a1a;
+  --gray-900:    #111111;
+  --gray-800:    #1f1f1f;
+  --gray-700:    #2d2d2d;
+  --gray-600:    #4a4a4a;
+  --gray-500:    #6b6b6b;
+  --gray-400:    #9a9a9a;
+  --gray-300:    #c5c5c5;
+  --gray-200:    #e5e5e5;
+  --gray-100:    #f5f5f5;
+  --gray-50:     #fafafa;
+  --white:       #ffffff;
+
+  /* Dorado — firma de la marca */
+  --gold:        #C9A84C;
+  --gold-light:  #E8CC7A;
+  --gold-dark:   #A88930;
+  --gold-subtle: rgba(201, 168, 76, 0.12);
+  --gold-border: rgba(201, 168, 76, 0.35);
+
+  /* Semánticos de estado */
+  --estado-pendiente:   #F59E0B;
+  --estado-contactado:  #3B82F6;
+  --estado-cotizado:    #8B5CF6;
+  --estado-cerrado:     #10B981;
+  --estado-cancelado:   #EF4444;
+
+  /* Sombras */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+  --shadow-lg:  0 10px 40px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-xl:  0 20px 60px rgba(0,0,0,0.18), 0 8px 20px rgba(0,0,0,0.10);
+  --shadow-gold: 0 4px 20px rgba(201, 168, 76, 0.25);
+
+  /* Transiciones */
+  --ease-luxury: cubic-bezier(0.23, 1, 0.32, 1);
+  --transition:  all 0.3s var(--ease-luxury);
+
+  /* Tipografía global */
+  font-family: var(--font-sans);
+  line-height: 1.7;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  color-scheme: light;
+  color: var(--black);
+  background-color: var(--white);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* ── Reset base ──────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
+  font-weight: 400;
+  color: var(--black);
+  background-color: var(--white);
+  line-height: 1.7;
+  letter-spacing: -0.01em;
+  width: 100%;
+  overflow-x: hidden;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* ── Tipografía ──────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--black);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin-bottom: 0.5em;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.125rem; }
+h6 { font-size: 1rem; }
+
+.font-serif { font-family: var(--font-serif) !important; }
+.font-display {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}
+
+/* ── Links ───────────────────────────────────────────────────────────────── */
+a, a:visited {
+  color: var(--black);
+  text-decoration: none;
+  transition: var(--transition);
   font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+}
+a:hover, a:focus {
+  color: var(--gold);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+/* ── Inputs ──────────────────────────────────────────────────────────────── */
+input, select, textarea {
+  border-radius: 10px;
+  border: 1.5px solid var(--gray-200);
+  padding: 0.75em 1em;
+  font-size: 0.95rem;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  background-color: var(--white);
+  color: var(--black);
+  transition: var(--transition);
+  width: 100%;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--gold);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--gold-subtle);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--gray-400);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   BOTONES — Sistema de componentes premium
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border: 1.5px solid transparent;
+  padding: 0.85rem 1.6rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: var(--transition);
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.btn-lg { padding: 1rem 2rem; font-size: 0.9rem; }
+.btn-sm { padding: 0.5rem 1rem; font-size: 0.75rem; }
+.btn-xs { padding: 0.35rem 0.75rem; font-size: 0.7rem; }
+
+/* Primario — Negro */
+.btn-primary {
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+.btn-primary:hover, .btn-primary:focus {
+  background: var(--black-soft);
+  border-color: var(--black-soft);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+  transform: translateY(-1px);
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Dorado — CTA principal del carrito */
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+  background-size: 200% 200%;
+  color: var(--black);
+  border-color: var(--gold);
+  box-shadow: var(--shadow-gold);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.btn-gold:hover, .btn-gold:focus {
+  background-position: 100% 0;
+  box-shadow: 0 6px 28px rgba(201, 168, 76, 0.45);
+  transform: translateY(-2px);
+}
+
+/* Outline */
+.btn-outline {
+  background: transparent;
+  color: var(--black);
+  border-color: var(--black);
+}
+.btn-outline:hover, .btn-outline:focus {
+  background: var(--black);
+  color: var(--white);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Ghost */
+.btn-ghost {
+  background: transparent;
+  color: var(--gray-600);
+  border-color: var(--gray-200);
+}
+.btn-ghost:hover, .btn-ghost:focus {
+  background: var(--gray-100);
+  color: var(--black);
+  transform: translateY(-1px);
+}
+
+/* Icono circular */
+.btn-icon {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: 9999px;
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.btn-icon:hover, .btn-icon:focus {
+  background: var(--black-soft);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Danger */
+.btn-danger {
+  background: transparent;
+  color: var(--estado-cancelado);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: var(--estado-cancelado);
+}
+
+/* WhatsApp */
+.btn-whatsapp {
+  background: #25D366;
+  color: var(--white);
+  border-color: #25D366;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+}
+.btn-whatsapp:hover {
+  background: #20b858;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+}
+
+/* Deshabilitado */
+.btn:disabled, button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Focus visible */
+.btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TARJETAS — Cards del sistema
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.card {
+  background: var(--white);
+  border-radius: 16px;
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.card-luxury {
+  background: var(--white);
+  border-radius: 20px;
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: var(--transition);
+}
+.card-luxury:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: var(--gold-border);
+}
+
+/* ── Badges de estado ──────────────────────────────────────────────────────── */
+.badge-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.badge-Pendiente   { background: rgba(245,158,11,0.12); color: #B45309; border: 1px solid rgba(245,158,11,0.3); }
+.badge-Contactado  { background: rgba(59,130,246,0.12); color: #1D4ED8; border: 1px solid rgba(59,130,246,0.3); }
+.badge-Cotizado    { background: rgba(139,92,246,0.12); color: #6D28D9; border: 1px solid rgba(139,92,246,0.3); }
+.badge-Cerrado     { background: rgba(16,185,129,0.12); color: #065F46; border: 1px solid rgba(16,185,129,0.3); }
+.badge-Cancelado   { background: rgba(239,68,68,0.12);  color: #B91C1C; border: 1px solid rgba(239,68,68,0.3); }
+
+/* ── Divisor dorado ────────────────────────────────────────────────────────── */
+.divider-gold {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 0 auto;
+}
+
+/* ── Utilidades ────────────────────────────────────────────────────────────── */
+.text-gold { color: var(--gold); }
+.bg-gold { background-color: var(--gold); }
+.border-gold { border-color: var(--gold); }
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.shadow-elegant { box-shadow: var(--shadow-lg); }
+.shadow-gold    { box-shadow: var(--shadow-gold); }
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* ── Chip ────────────────────────────────────────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* ── Animaciones ──────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); }
+  50%       { box-shadow: 0 0 0 8px rgba(201, 168, 76, 0.15); }
+}
+
+.animate-fade-in-up  { animation: fadeInUp 0.5s var(--ease-luxury) both; }
+.animate-fade-in     { animation: fadeIn 0.35s ease both; }
+.animate-scale-in    { animation: scaleIn 0.25s var(--ease-luxury) both; }
+.animate-slide-right { animation: slideInRight 0.4s var(--ease-luxury) both; }
+.animate-gold-pulse  { animation: goldPulse 2s ease-in-out infinite; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+.loading-spinner {
+  border: 2px solid var(--gray-200);
+  border-top: 2px solid var(--gold);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ── Transiciones globales suaves ────────────────────────────────────────── */
+* {
+  transition: color 0.2s ease,
+              background-color 0.2s ease,
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
+}
+/* Excluir transform de la transición global para no conflictar con Framer Motion */
+button, a, .card, .card-luxury, .btn {
+  transition: var(--transition);
+}
+
+/* ── Scrollbar premium ───────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--gray-50); }
+::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ── Focus global ─────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ── Containers ───────────────────────────────────────────────────────────── */
+.main-page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  color: var(--black);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Tabla premium ────────────────────────────────────────────────────────── */
+.table-luxury {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.table-luxury thead th {
+  background: var(--gray-50);
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  border-bottom: 1px solid var(--gray-200);
+}
+.table-luxury tbody td {
+  padding: 14px 16px;
+  font-size: 0.875rem;
+  color: var(--black);
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: middle;
+}
+.table-luxury tbody tr:hover {
+  background: var(--gray-50);
+}
+.table-luxury tbody tr:last-child td {
+  border-bottom: none;
+}
