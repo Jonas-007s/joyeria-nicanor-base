@@ -5,16 +5,35 @@ const { authenticateToken } = require('./auth');
 const multer = require('multer');
 const path = require('path');
 const { body, validationResult } = require('express-validator');
+const cloudinary = require('cloudinary').v2;
+const streamifier = require('streamifier');
 
-// Configuración de multer para guardar imágenes en /uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads'));
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
+// Configuración de Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
+// Helper para subir buffer a Cloudinary
+const uploadToCloudinary = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const cld_upload_stream = cloudinary.uploader.upload_stream(
+      { folder: "nicanor_joyas" },
+      (error, result) => {
+        if (result) {
+          resolve(result.secure_url);
+        } else {
+          reject(error);
+        }
+      }
+    );
+    streamifier.createReadStream(buffer).pipe(cld_upload_stream);
+  });
+};
+
+// Configuración de multer para usar memoria
+const storage = multer.memoryStorage();
 
 // Obtener todos los productos
 router.get('/', async (req, res) => {
@@ -84,7 +103,17 @@ router.post(
       const especificaciones = parsedBody.especificaciones || {};
       const infoAdicional = parsedBody.infoAdicional || {};
       const lanzamiento = parsedBody.lanzamiento || {};
-      const imagenes = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
+      
+      // Subir imágenes a Cloudinary
+      const imagenes = [];
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          const url = await uploadToCloudinary(file.buffer);
+          // Modificamos URL para aplicar optimizaciones automáticas
+          const optimizedUrl = url.replace('/upload/', '/upload/f_auto,q_auto/');
+          imagenes.push(optimizedUrl);
+        }
+      }
 
       const nuevo = new Product({
         ...parsedBody,
@@ -114,7 +143,15 @@ router.put('/:id', authenticateToken, upload.array('imagenes', 5), async (req, r
     const existente = await Product.findById(req.params.id);
     if (!existente) return res.status(404).json({ error: 'Producto no encontrado' });
 
-    const imagenesNuevas = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
+    // Subir nuevas imágenes a Cloudinary
+    const imagenesNuevas = [];
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const url = await uploadToCloudinary(file.buffer);
+        const optimizedUrl = url.replace('/upload/', '/upload/f_auto,q_auto/');
+        imagenesNuevas.push(optimizedUrl);
+      }
+    }
 
     const update = { ...parsedBody };
 
