@@ -114,9 +114,9 @@ export default function DetalleProducto() {
       {/* Contenido principal */}
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
             {/* Galería de imágenes */}
-            <div className="space-y-6">
+            <div className="space-y-6 w-full max-w-xl mx-auto lg:mx-0">
               <div className="aspect-square overflow-hidden rounded-2xl bg-gray-100">
                 <img
                   src={producto.imagenes?.[selectedImage] || '/placeholder.jpg'}
