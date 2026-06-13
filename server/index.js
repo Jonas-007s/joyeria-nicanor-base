@@ -15,6 +15,9 @@ app.use(helmet({
   contentSecurityPolicy: false
 }));
 
+// Configurar trust proxy para plataformas como Render/Railway (evita errores con express-rate-limit)
+app.set('trust proxy', 1);
+
 // Rate limiting solo a rutas API
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
